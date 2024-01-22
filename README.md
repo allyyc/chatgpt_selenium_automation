@@ -12,8 +12,7 @@ ChatGPT Automation is a Python project that aims to automate interactions with O
 
 ##  How to run
 
- ```python main.py
-   ```
+ ```python main.py```
    
    
 ## Notes
