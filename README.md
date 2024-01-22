@@ -1,6 +1,6 @@
 # Automating GPT-4's RAG with Selenium
 
-This is a Python project forked from [https://github.com/Michelangelo27/chatgpt_selenium_automation] that aims to automate interactions with OpenAI's ChatGPT using Selenium WebDriver. Currently, it requires human interaction for log-in and human verification. It handles launching Chrome, connecting to ChatGPT, sending prompts, and retrieving responses. This tool can be useful for experimenting with ChatGPT or building similar web automation tools.
+This is a Python project forked from [https://github.com/Michelangelo27/chatgpt_selenium_automation](https://github.com/Michelangelo27/chatgpt_selenium_automation) that aims to automate interactions with GPT-4's RAG functionality, using Selenium WebDriver. Currently, it requires human interaction for log-in and human verification. It handles launching Chrome, connecting to ChatGPT, sending prompts, retrieving responses, and extracting URL citations.
 
 
 ## Prerequisites
