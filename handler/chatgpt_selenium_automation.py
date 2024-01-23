@@ -99,6 +99,9 @@ class ChatGPTAutomation:
                             time.sleep(45)
                             conversation = self.return_chatgpt_conversation()
                             self.process_conversation(conversation)
+                            self.data = self.read_csv(self.path_to_csv)
+
+
                             print("Read items into csv. Loading new page...")
                             link = self.driver.find_element(By.CSS_SELECTOR, "a[href='/g/g-cy3cGFjNo-gpt-4-rag']")
                             link.click()
@@ -111,6 +114,8 @@ class ChatGPTAutomation:
                         time.sleep(45)
                         conversation = self.return_chatgpt_conversation()
                         self.process_conversation(conversation)
+                        self.data = self.read_csv(self.path_to_csv)
+
                         print("Read items into csv. Loading new page...")
                         link = self.driver.find_element(By.CSS_SELECTOR, "a[href='/g/g-cy3cGFjNo-gpt-4-rag']")
                         link.click()
@@ -123,6 +128,8 @@ class ChatGPTAutomation:
                 print("Filling in .csv")
                 conversation = self.return_chatgpt_conversation()
                 self.process_conversation(conversation)
+                self.data = self.read_csv(self.path_to_csv)
+
                 full_csv = self.is_csv_full()
             self.end_session()
         
@@ -131,6 +138,8 @@ class ChatGPTAutomation:
             print("Except condition")
             conversation = self.return_chatgpt_conversation()
             self.process_conversation(conversation)
+            self.data = self.read_csv(self.path_to_csv)
+
             full_csv = self.is_csv_full()
             self.end_session()  
 
@@ -187,6 +196,8 @@ class ChatGPTAutomation:
             time.sleep(45)
             conversation = self.return_chatgpt_conversation()
             self.process_conversation(conversation)
+            self.data = self.read_csv(self.path_to_csv)
+
             print("Read items into csv. Loading new page...")
 
             link = self.driver.find_element(By.CSS_SELECTOR, "a[href='/g/g-cy3cGFjNo-gpt-4-rag']")
@@ -289,13 +300,11 @@ class ChatGPTAutomation:
 
     def end_session(self):
         while True:
-            user_input = input("Enter e if you want to end this session").lower()
-            if user_input == 'e':
-                print("Saving current data, ending session")
-                time.sleep(10)
-                conversation = self.return_chatgpt_conversation()
-                self.process_conversation(conversation)
-                self.quit()
+            print("Saving current data, ending session")
+            time.sleep(10)
+            conversation = self.return_chatgpt_conversation()
+            self.process_conversation(conversation)
+            self.quit()
             sys.exit(0)
 
     def quit(self):
