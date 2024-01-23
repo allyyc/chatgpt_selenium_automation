@@ -38,7 +38,14 @@ csv_path = "data/test.csv"
 # prompts = get_prompts_from_csv(csv_path)
 chatgpt = ChatGPTAutomation(chrome_path, chrome_driver_path)
 
-chatgpt.loop_through_prompts()
+test = chatgpt.test_1()
+print("test: ", test)
+test = test.replace("'", "\\'")
+test = test.replace("\n", "\\n")
+
+chatgpt.populate_conversations(5, 5)
+
+# chatgpt.loop_through_prompts()
 
 # thread1 = threading.Thread(target=chatgpt.loop_through_prompts())
 # thread2 = threading.Thread(target=chatgpt.end_session())

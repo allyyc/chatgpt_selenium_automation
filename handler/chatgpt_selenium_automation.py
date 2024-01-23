@@ -31,7 +31,7 @@ class ChatGPTAutomation:
 
         self.chrome_path = chrome_path
         self.chrome_driver_path = chrome_driver_path
-        self.path_to_csv = "questions.csv"
+        self.path_to_csv = "1400-questions.csv"
         self.url = r"https://chat.openai.com/g/g-cy3cGFjNo-gpt-4-rag"
         self.free_port = self.find_available_port()
         self.launch_chrome_with_remote_debugging(self.free_port, self.url)
@@ -49,7 +49,7 @@ class ChatGPTAutomation:
         """ Reads content of .csv into list of lists """
         with open(path_to_csv, newline='') as csvfile:
             csv_reader = csv.reader(csvfile)
-            next(csv_reader, None)
+            # next(csv_reader, None)
             data = list(csv_reader)
         return data
     
@@ -59,12 +59,86 @@ class ChatGPTAutomation:
             csv_writer = csv.writer(file)
             csv_writer.writerows(self.data)
 
+    def return_chat_elements(self):
+        """ Returns a list of elements that are the conversations from on left panel side of ChatGPT (exclude)"""
+        return self.driver.find_elements(By.CSS_SELECTOR, "a[href^='/g/g-cy3']")[2:]
+    
+    def test(self):
+        for i in range(10):
+            chat_elements = self.return_chat_elements()
+            chat_elements[i].click()
+            print("CLICKED!")
+            time.sleep(45)
+
+    def test_1(self):
+        return self.data[152][3]
+        
+
     def is_csv_full(self):
         """ Checks if .csv file has responses & citations filled in for every prompt """
         for row in self.data:
             if row[4] == 'GPT 4 RAG' or not row[4].strip() or row[5] == '[]':
                 return False
         return True
+    
+    def populate_conversations(self, queries_per_conversation, max_num_conversations):
+
+        # Counts how many queries get messed up
+        cur_queries = 0
+        num_conversations = 1
+
+        while self.is_csv_full() == False:
+            for row in self.data:
+                if cur_queries == queries_per_conversation:
+                    print("Max count reached for this conversation. Opening new conversation.")
+                    self.open_new_conversation()
+                    num_conversations += 1
+                    print("Done.")
+                    cur_queries = 0
+
+                if num_conversations == max_num_conversations:
+                    for i in reversed(range(1, max_num_conversations)):
+                        chat_elements = self.return_chat_elements()
+                        chat_elements[i].click()
+                        print("Loading chat to read into .csv file. Index: ", i)
+                        time.sleep(20)
+                        conversation = self.return_chatgpt_conversation()
+                        self.process_conversation(conversation)
+                        # self.open_new_conversation()
+                    self.open_new_conversation()
+                    num_conversations = 1
+                    cur_queries = 0
+
+                if len(row) > 4 and (row[4] == 'GPT 4 RAG' or not row[4].strip() or row[5] == '[]'):
+                    cur_prompt = row[3]
+                    print("Sending prompt to GPT: ", cur_prompt)
+
+                    # Preprocess Python strings for Javascript
+                    cur_prompt = cur_prompt.replace("'", "\\'")
+                    cur_prompt = cur_prompt.replace("\n", "\\n")
+
+                    # Send to GPT-4
+                    self.send_prompt_to_chatgpt(cur_prompt)
+
+                    while self.is_button_present("//button[@aria-label='Stop generating']"):
+                        time.sleep(20)
+                    time.sleep(20)
+
+                    if "There was an error generating a response" in self.driver.page_source or "network error" in self.driver.page_source or "Error in message stream" in self.driver.page_source:
+                        print("Loading error. Will generate new conversation")
+                        self.open_new_conversation()
+                        num_conversations += 1
+                    else:
+                        print("No errors, next prompt")
+                        cur_queries += 1
+            self.end_session()
+
+    def open_new_conversation(self):
+        link = self.driver.find_element(By.CSS_SELECTOR, "a[href='/g/g-cy3cGFjNo-gpt-4-rag']")
+        link.click()
+        time.sleep(30)
+        self.input_box = self.driver.find_element(By.ID, "prompt-textarea")
+
 
     def loop_through_prompts(self):
         try:
@@ -92,9 +166,9 @@ class ChatGPTAutomation:
                             time.sleep(20)
 
                         time.sleep(30)
-
+                        # TO-DO: Handle entries where the only url is openai
                         # If GPT-4 raises an error, writes current conversation into .csv file and opens new chat
-                        if "There was an error generating a response" in self.driver.page_source or "network error" in self.driver.page_source:
+                        if "There was an error generating a response" in self.driver.page_source or "network error" in self.driver.page_source or "Error in message stream" in self.driver.page_source:
                             print("Loading error. Will read current conversation into csv, then generate new page")
                             time.sleep(45)
                             conversation = self.return_chatgpt_conversation()
