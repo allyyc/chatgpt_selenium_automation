@@ -31,7 +31,7 @@ class ChatGPTAutomation:
 
         self.chrome_path = chrome_path
         self.chrome_driver_path = chrome_driver_path
-        self.path_to_csv = "1400-questions.csv"
+        self.path_to_csv = "1400-last-200.csv"
         self.url = r"https://chat.openai.com/g/g-cy3cGFjNo-gpt-4-rag"
         # self.url = r"https://chat.openai.com/g/g-pGibIwKEi-gpt-4-rag"
         self.free_port = self.find_available_port()
@@ -470,7 +470,6 @@ class ChatGPTAutomation:
         print("Closing the browser...")
         self.driver.close()
         self.driver.quit()
-
 
 
 

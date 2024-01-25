@@ -45,7 +45,7 @@ chatgpt = ChatGPTAutomation(chrome_path, chrome_driver_path)
 
 # chatgpt.read_conversations_into_csv(5)
 
-chatgpt.populate_conversations(8, 5)
+chatgpt.populate_conversations(10, 18)
 # chatgpt.write_to_conversations(6)
 
 # chatgpt.loop_through_prompts()
